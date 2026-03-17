@@ -16,12 +16,9 @@ import logging
 import time
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
-from pathlib import Path
-from typing import Any
 
-from ..core.event_bus import Event, EventBus, EventPriority
 from ..core.config import Settings
+from ..core.event_bus import Event, EventBus, EventPriority
 
 logger = logging.getLogger(__name__)
 
@@ -266,7 +263,7 @@ class MemoryManager:
         self, embedding: list[float], *, limit: int, tags: list[str] | None
     ) -> list[dict]:
         try:
-            from qdrant_client.models import Filter, FieldCondition, MatchAny
+            from qdrant_client.models import FieldCondition, Filter, MatchAny
             flt = None
             if tags:
                 flt = Filter(

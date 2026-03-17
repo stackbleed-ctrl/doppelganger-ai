@@ -10,10 +10,7 @@ import asyncio
 import importlib.util
 import json
 import logging
-import subprocess
-import sys
 from pathlib import Path
-from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +99,7 @@ class SkillLoader:
             )
             return result if isinstance(result, dict) else {"result": result}
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return {"error": f"Skill '{skill_name}' timed out"}
         except Exception as e:
             logger.error("Skill '%s' execution error: %s", skill_name, e)

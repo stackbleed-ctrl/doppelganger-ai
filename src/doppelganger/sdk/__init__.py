@@ -25,10 +25,11 @@ import json
 import logging
 import time
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, Type
+from typing import Any, Type
 
 logger = logging.getLogger(__name__)
 

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -175,8 +175,9 @@ class MultilingualManager:
 async def gtts_synthesize(text: str, lang: str = "en") -> bytes:
     """Synthesize speech using gTTS (requires internet)."""
     try:
-        from gtts import gTTS
         import io
+
+        from gtts import gTTS
         loop = asyncio.get_event_loop()
 
         def _synth():

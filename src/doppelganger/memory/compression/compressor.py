@@ -10,7 +10,6 @@ Implements forgetting curve, importance scoring, and tiered storage:
 from __future__ import annotations
 
 import asyncio
-import hashlib
 import json
 import logging
 import time

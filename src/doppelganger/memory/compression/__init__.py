@@ -1,3 +1,3 @@
-from .compressor import MemoryCompressor, MemorySummary, ImportanceScore
+from .compressor import ImportanceScore, MemoryCompressor, MemorySummary
 
 __all__ = ["MemoryCompressor", "MemorySummary", "ImportanceScore"]

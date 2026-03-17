@@ -10,16 +10,16 @@ import json
 import logging
 import time
 import uuid
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator
 
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends, Security
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from ..core.config import get_settings
-from ..core.event_bus import bus, Event
+from ..core.event_bus import Event, bus
 from ..core.orchestrator import Orchestrator
 
 logger = logging.getLogger(__name__)

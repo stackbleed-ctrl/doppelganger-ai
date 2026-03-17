@@ -5,7 +5,6 @@ Registers all new endpoints for the v0.3–v0.5 feature set.
 
 from __future__ import annotations
 
-import asyncio
 from fastapi import HTTPException
 from pydantic import BaseModel
 

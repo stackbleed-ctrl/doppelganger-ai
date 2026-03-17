@@ -7,7 +7,6 @@ Connects to core via HTTP/WebSocket and publishes CSI events.
 import asyncio
 import logging
 import os
-import sys
 
 logging.basicConfig(
     level=os.environ.get("LOG_LEVEL", "INFO"),

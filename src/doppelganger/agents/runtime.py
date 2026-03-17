@@ -12,10 +12,9 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Coroutine
 
-from ..core.event_bus import Event, EventBus, EventPriority
 from ..core.config import Settings
+from ..core.event_bus import Event, EventBus, EventPriority
 from .grok_client import GrokClient, get_grok
 from .tools import BUILTIN_TOOLS, ToolExecutor
 
@@ -126,7 +125,7 @@ class AgentRuntime:
             try:
                 task = await asyncio.wait_for(self._queue.get(), timeout=1.0)
                 await self._run_task(task, worker_id)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 continue
             except asyncio.CancelledError:
                 break

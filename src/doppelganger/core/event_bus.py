@@ -10,9 +10,10 @@ import asyncio
 import logging
 import time
 from collections import defaultdict
+from collections.abc import Callable, Coroutine
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any, Callable, Coroutine
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +110,7 @@ class EventBus:
                 _, _, event = await asyncio.wait_for(self._queue.get(), timeout=0.1)
                 await self._dispatch(event)
                 self._stats["dispatched"] += 1
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 continue
             except asyncio.CancelledError:
                 break

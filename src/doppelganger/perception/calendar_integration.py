@@ -11,7 +11,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import httpx
@@ -147,8 +147,8 @@ class CalendarManager:
         if not api_key:
             raise ValueError("GOOGLE_API_KEY not set")
 
-        now_iso = datetime.now(timezone.utc).isoformat()
-        week_iso = (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
+        now_iso = datetime.now(UTC).isoformat()
+        week_iso = (datetime.now(UTC) + timedelta(days=7)).isoformat()
 
         async with httpx.AsyncClient(timeout=15.0) as client:
             resp = await client.get(
@@ -176,7 +176,7 @@ class CalendarManager:
                     return datetime.fromisoformat(d["dateTime"]).timestamp()
                 if "date" in d:
                     return datetime.strptime(d["date"], "%Y-%m-%d").replace(
-                        tzinfo=timezone.utc
+                        tzinfo=UTC
                     ).timestamp()
                 return time.time()
 
@@ -225,10 +225,10 @@ class CalendarManager:
                             if "T" in val:
                                 fmt = "%Y%m%dT%H%M%SZ" if val.endswith("Z") else "%Y%m%dT%H%M%S"
                                 return datetime.strptime(val.rstrip("Z"), fmt.rstrip("Z")).replace(
-                                    tzinfo=timezone.utc
+                                    tzinfo=UTC
                                 ).timestamp()
                             return datetime.strptime(val, "%Y%m%d").replace(
-                                tzinfo=timezone.utc
+                                tzinfo=UTC
                             ).timestamp()
 
                         start = ical_ts(current["DTSTART"])

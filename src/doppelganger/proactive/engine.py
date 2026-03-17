@@ -16,13 +16,12 @@ import asyncio
 import logging
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
-from typing import Any
 
-from ..core.event_bus import Event, EventBus, EventPriority
-from ..core.config import Settings
 from ..agents.grok_client import get_grok
+from ..core.config import Settings
+from ..core.event_bus import Event, EventBus, EventPriority
 
 logger = logging.getLogger(__name__)
 

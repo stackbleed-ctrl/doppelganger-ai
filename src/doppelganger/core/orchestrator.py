@@ -10,8 +10,8 @@ import logging
 import signal
 from typing import Any
 
-from .event_bus import EventBus, EventPriority, bus
 from .config import Settings, get_settings
+from .event_bus import bus
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +27,14 @@ class Orchestrator:
         logger.info("🧬 Doppelganger booting — version %s", self.settings.version)
         await self.bus.start()
 
-        from ..perception.pipeline import PerceptionPipeline
-        from ..memory.memory_manager import MemoryManager
-        from ..memory.graphiti_kg import GraphitiKG
-        from ..reasoning.swarm import ReasoningSwarm
         from ..agents.runtime import AgentRuntime
-        from ..voice.pipeline import VoicePipeline
+        from ..memory.graphiti_kg import GraphitiKG
+        from ..memory.memory_manager import MemoryManager
+        from ..perception.pipeline import PerceptionPipeline
         from ..personas.manager import PersonaManager
         from ..proactive.engine import ProactiveEngine
+        from ..reasoning.swarm import ReasoningSwarm
+        from ..voice.pipeline import VoicePipeline
 
         self.graphiti = GraphitiKG(
             neo4j_url=self.settings.memory.graphiti_neo4j_url,

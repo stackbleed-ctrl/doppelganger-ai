@@ -6,6 +6,7 @@ Public skill registry endpoints for browse, install, publish.
 from __future__ import annotations
 
 from pathlib import Path
+
 from fastapi import HTTPException
 from pydantic import BaseModel
 

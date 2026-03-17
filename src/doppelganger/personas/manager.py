@@ -7,16 +7,13 @@ reasoning style, and auto-switch triggers.
 
 from __future__ import annotations
 
-import asyncio
 import json
 import logging
 import time
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
 
-from ..core.event_bus import Event, EventBus, EventPriority
 from ..core.config import Settings
+from ..core.event_bus import Event, EventBus, EventPriority
 
 logger = logging.getLogger(__name__)
 

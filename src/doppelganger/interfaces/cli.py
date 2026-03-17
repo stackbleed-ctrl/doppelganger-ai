@@ -4,15 +4,11 @@ Doppelganger CLI
 
 import asyncio
 import json
-import sys
-from pathlib import Path
 
 import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.live import Live
-from rich.spinner import Spinner
 
 app = typer.Typer(
     name="doppelganger",
@@ -32,7 +28,7 @@ def start(
 ):
     """Start the Doppelganger daemon."""
     import uvicorn
-    from .api import create_app
+
 
     if no_voice:
         import os

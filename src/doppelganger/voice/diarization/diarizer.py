@@ -15,10 +15,8 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 
@@ -82,8 +80,8 @@ class SpeakerDiarizer:
             logger.warning("Whisper for diarization failed: %s", e)
 
     def _load_pyannote(self):
-        from pyannote.audio import Pipeline
         import torch
+        from pyannote.audio import Pipeline
         hf_token = __import__('os').environ.get("HF_TOKEN", "")
         if not hf_token:
             raise ValueError("HF_TOKEN env var required for pyannote (free at huggingface.co)")
@@ -163,7 +161,6 @@ class SpeakerDiarizer:
         min_speakers: int,
         max_speakers: int,
     ) -> list[SpeakerSegment]:
-        import torch
         kwargs = {}
         if num_speakers:
             kwargs["num_speakers"] = num_speakers
@@ -187,7 +184,7 @@ class SpeakerDiarizer:
         Simple energy-based segmentation as fallback.
         Cannot distinguish speakers, labels all as SPEAKER_00.
         """
-        import wave, struct
+        import wave
         try:
             with wave.open(audio_path, 'rb') as wf:
                 n_frames = wf.getnframes()
@@ -232,7 +229,8 @@ class SpeakerDiarizer:
             return segments
 
         try:
-            import wave, tempfile, struct
+            import tempfile
+            import wave
             # Load full audio
             with wave.open(audio_path, 'rb') as wf:
                 rate     = wf.getframerate()

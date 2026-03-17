@@ -10,10 +10,9 @@ import asyncio
 import logging
 import time
 from dataclasses import dataclass, field
-from typing import Any
 
-from ..core.event_bus import EventBus, EventPriority
 from ..core.config import Settings
+from ..core.event_bus import EventBus, EventPriority
 
 logger = logging.getLogger(__name__)
 
@@ -169,8 +168,8 @@ class PerceptionPipeline:
         Actual speech transcription is handled by the VoicePipeline.
         """
         try:
-            import pyaudio
             import numpy as np
+            import pyaudio
         except ImportError:
             logger.warning("pyaudio/numpy not available — mic activity monitoring disabled")
             return

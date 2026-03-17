@@ -1,3 +1,3 @@
-from .memory_manager import MemoryManager, MemoryNode, MemoryEdge
+from .memory_manager import MemoryEdge, MemoryManager, MemoryNode
 
 __all__ = ["MemoryManager", "MemoryNode", "MemoryEdge"]

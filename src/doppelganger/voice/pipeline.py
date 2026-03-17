@@ -10,13 +10,11 @@ import asyncio
 import io
 import logging
 import queue
-import threading
 import time
 from pathlib import Path
-from typing import Any
 
-from ..core.event_bus import Event, EventBus, EventPriority
 from ..core.config import Settings
+from ..core.event_bus import Event, EventBus, EventPriority
 
 logger = logging.getLogger(__name__)
 
@@ -171,7 +169,6 @@ class VoicePipeline:
             return
         try:
             import sounddevice as sd
-            import numpy as np
 
             if self.cfg.tts_engine == "kokoro":
                 generator = self._tts_engine(text, voice=self.cfg.tts_voice, speed=1.0)
@@ -196,9 +193,9 @@ class VoicePipeline:
         → sends to Whisper → publishes transcript event.
         """
         try:
-            import webrtcvad
-            import pyaudio
             import numpy as np
+            import pyaudio
+            import webrtcvad
         except ImportError:
             logger.warning("webrtcvad/pyaudio not installed — voice listening disabled")
             return

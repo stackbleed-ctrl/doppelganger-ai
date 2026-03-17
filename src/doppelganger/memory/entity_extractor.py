@@ -6,15 +6,13 @@ Feeds the Graphiti KG with structured entity data.
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import re
-import time
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..graphiti_kg import GraphitiKG, Entity
+    from ..graphiti_kg import GraphitiKG
 
 logger = logging.getLogger(__name__)
 
