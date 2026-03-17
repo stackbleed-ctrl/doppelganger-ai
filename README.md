@@ -184,13 +184,13 @@ All settings can be overridden in `config/user.yaml` or via `DOPPELGANGER__` pre
 
 ## 🛣️ Roadmap
 
-- [ ] Tauri desktop app (native, no Docker needed)
-- [ ] iOS/Android companion (local WiFi only)
-- [ ] Graphiti full temporal KG integration
-- [ ] Persona switching (work vs personal)
-- [ ] Proactive suggestions without prompting
-- [ ] Plugin SDK + marketplace registry
-- [ ] Multi-user household mode
+- [x] Tauri desktop app (native, no Docker needed)
+- [x] iOS/Android companion (local WiFi only)
+- [x] Graphiti full temporal KG integration
+- [x] Persona switching (work vs personal)
+- [x] Proactive suggestions without prompting
+- [x] Plugin SDK + marketplace registry
+- [x] Multi-user household mode
 
 ---
 
