@@ -1,0 +1,37 @@
+{
+  "name": "smart_home",
+  "version": "1.0.0",
+  "description": "Control smart home devices via Home Assistant REST API.",
+  "author": "doppelganger-ai",
+  "timeout_sec": 15,
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "action": {
+        "type": "string",
+        "enum": ["get_state", "turn_on", "turn_off", "toggle", "set_brightness", "set_temperature", "list_devices"],
+        "description": "Action to perform"
+      },
+      "entity_id": {
+        "type": "string",
+        "description": "Home Assistant entity ID (e.g. light.living_room)"
+      },
+      "brightness": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 255,
+        "description": "Brightness level (for lights)"
+      },
+      "temperature": {
+        "type": "number",
+        "description": "Target temperature in Celsius (for climate devices)"
+      }
+    },
+    "required": ["action"]
+  },
+  "config": {
+    "ha_url": "${HOME_ASSISTANT_URL}",
+    "ha_token": "${HOME_ASSISTANT_TOKEN}"
+  },
+  "permissions": ["network"]
+}

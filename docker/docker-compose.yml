@@ -1,0 +1,145 @@
+version: "3.9"
+
+# ─── Networks ────────────────────────────────────────────────────────────────
+networks:
+  doppelganger:
+    driver: bridge
+
+# ─── Volumes ────────────────────────────────────────────────────────────────
+volumes:
+  doppelganger_data:      # persistent user memory + config
+  qdrant_data:            # vector store
+  neo4j_data:             # knowledge graph
+  ollama_models:          # local LLM models
+
+# ─── Services ───────────────────────────────────────────────────────────────
+services:
+
+  # ── Core orchestrator + API ─────────────────────────────────────────────
+  core:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.core
+    container_name: doppelganger-core
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - doppelganger_data:/root/.doppelganger
+      - ./skills:/app/skills:ro          # live skill updates
+      - ./config:/app/config:ro
+    environment:
+      - XAI_API_KEY=${XAI_API_KEY}
+      - DOPPELGANGER_MEMORY__QDRANT_URL=http://qdrant:6333
+      - DOPPELGANGER_MEMORY__GRAPHITI_NEO4J_URL=bolt://neo4j:7687
+      - DOPPELGANGER_MEMORY__GRAPHITI_NEO4J_PASSWORD=${NEO4J_PASSWORD:-doppelganger}
+      - DOPPELGANGER_VOICE__STT_DEVICE=${STT_DEVICE:-cpu}
+      - DOPPELGANGER_PERCEPTION__ENABLE_WIFI_CSI=${ENABLE_WIFI_CSI:-false}
+      - EMAIL_IMAP_HOST=${EMAIL_IMAP_HOST:-}
+      - EMAIL_SMTP_HOST=${EMAIL_SMTP_HOST:-}
+      - EMAIL_ADDRESS=${EMAIL_ADDRESS:-}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD:-}
+      - HOME_ASSISTANT_URL=${HOME_ASSISTANT_URL:-http://homeassistant.local:8123}
+      - HOME_ASSISTANT_TOKEN=${HOME_ASSISTANT_TOKEN:-}
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    networks:
+      - doppelganger
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  # ── WiFi CSI sensing (privileged — disable if no compatible NIC) ────────
+  sensing:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.core
+    container_name: doppelganger-sensing
+    restart: unless-stopped
+    command: python -m doppelganger.perception.daemon
+    privileged: true                     # required for WiFi monitor mode
+    network_mode: host                   # required for raw socket access
+    volumes:
+      - doppelganger_data:/root/.doppelganger
+    environment:
+      - DOPPELGANGER_PERCEPTION__ENABLE_WIFI_CSI=${ENABLE_WIFI_CSI:-false}
+      - DOPPELGANGER_PERCEPTION__CSI_INTERFACE=${CSI_INTERFACE:-wlan0}
+    profiles:
+      - wifi-csi                         # `docker compose --profile wifi-csi up` to enable
+
+  # ── Qdrant vector store ─────────────────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: doppelganger-qdrant
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - doppelganger
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/readyz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Neo4j knowledge graph (Graphiti backend) ────────────────────────────
+  neo4j:
+    image: neo4j:5-community
+    container_name: doppelganger-neo4j
+    restart: unless-stopped
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-doppelganger}
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - doppelganger
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # ── Ollama (local embeddings — optional, can use OpenAI-compatible API) ─
+  ollama:
+    image: ollama/ollama:latest
+    container_name: doppelganger-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - doppelganger
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    profiles:
+      - ollama                           # opt-in: `docker compose --profile ollama up`
+
+  # ── React frontend ──────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: doppelganger-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    environment:
+      - VITE_API_URL=http://localhost:${API_PORT:-8000}
+    depends_on:
+      core:
+        condition: service_healthy
+    networks:
+      - doppelganger

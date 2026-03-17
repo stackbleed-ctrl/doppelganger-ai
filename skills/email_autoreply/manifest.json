@@ -1,0 +1,37 @@
+{
+  "name": "email_autoreply",
+  "version": "1.0.0",
+  "description": "Read recent emails and draft smart auto-replies using your personal writing style.",
+  "author": "doppelganger-ai",
+  "timeout_sec": 60,
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "email_id": {
+        "type": "string",
+        "description": "Email ID or 'latest' to process most recent unread"
+      },
+      "tone": {
+        "type": "string",
+        "enum": ["professional", "casual", "brief"],
+        "default": "professional",
+        "description": "Reply tone"
+      },
+      "send": {
+        "type": "boolean",
+        "default": false,
+        "description": "Actually send the reply (false = draft only)"
+      }
+    },
+    "required": []
+  },
+  "config": {
+    "imap_host": "${EMAIL_IMAP_HOST}",
+    "imap_port": 993,
+    "smtp_host": "${EMAIL_SMTP_HOST}",
+    "smtp_port": 587,
+    "email": "${EMAIL_ADDRESS}",
+    "password": "${EMAIL_PASSWORD}"
+  },
+  "permissions": ["network"]
+}

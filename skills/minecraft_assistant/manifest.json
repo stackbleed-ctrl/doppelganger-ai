@@ -1,0 +1,29 @@
+{
+  "name": "minecraft_assistant",
+  "version": "1.0.0",
+  "description": "Minecraft helper: crafting recipes, mob strategies, biome finder, seed analysis, and build planning via Grok.",
+  "author": "doppelganger-ai",
+  "timeout_sec": 30,
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Your Minecraft question or request"
+      },
+      "mode": {
+        "type": "string",
+        "enum": ["recipe", "mob", "build", "biome", "general"],
+        "default": "general",
+        "description": "Query mode for more targeted responses"
+      },
+      "version": {
+        "type": "string",
+        "default": "1.21",
+        "description": "Minecraft version for accurate info"
+      }
+    },
+    "required": ["query"]
+  },
+  "permissions": []
+}

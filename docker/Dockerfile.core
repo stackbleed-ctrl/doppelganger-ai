@@ -1,0 +1,51 @@
+# ── Doppelganger Core Image ───────────────────────────────────────────────
+FROM python:3.11-slim AS base
+
+# System deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc g++ libffi-dev libssl-dev \
+    portaudio19-dev libasound2-dev \
+    ffmpeg libsndfile1 \
+    curl git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# ── Python deps ───────────────────────────────────────────────────────────
+FROM base AS deps
+COPY pyproject.toml .
+
+# Install uv for fast dependency resolution
+RUN pip install --no-cache-dir uv
+
+# Install all deps (including optional extras)
+RUN uv pip install --system --no-cache \
+    "doppelganger-ai[all] @ ." 2>/dev/null || \
+    uv pip install --system --no-cache -e ".[all]" 2>/dev/null || \
+    pip install --no-cache-dir \
+        fastapi uvicorn[standard] pydantic pydantic-settings \
+        httpx typer rich pyyaml psutil \
+        faster-whisper openai \
+        qdrant-client \
+        numpy \
+        webrtcvad pyaudio sounddevice soundfile \
+        || true
+
+# ── App ───────────────────────────────────────────────────────────────────
+FROM deps AS app
+COPY src/ ./src/
+COPY skills/ ./skills/
+COPY config/ ./config/
+COPY models/ ./models/
+
+ENV PYTHONPATH=/app/src
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+CMD ["uvicorn", "doppelganger.interfaces.api:get_app", \
+     "--host", "0.0.0.0", "--port", "8000", \
+     "--factory", "--workers", "1"]

@@ -1,0 +1,58 @@
+# Doppelganger Default Configuration
+# Override in config/user.yaml or via environment variables (DOPPELGANGER__ prefix)
+
+version: "0.1.0"
+debug: false
+log_level: "INFO"
+
+grok:
+  base_url: "https://api.x.ai/v1"
+  model: "grok-3-latest"
+  max_tokens: 4096
+  temperature: 0.7
+  streaming: true
+  # api_key: set via XAI_API_KEY env var
+
+memory:
+  backend: "qdrant"
+  qdrant_url: "http://qdrant:6333"
+  qdrant_collection: "doppelganger"
+  graphiti_neo4j_url: "bolt://neo4j:7687"
+  graphiti_neo4j_user: "neo4j"
+  graphiti_neo4j_password: "doppelganger"
+  embedding_model: "nomic-embed-text"
+  short_term_capacity: 128
+  long_term_ttl_days: 365
+
+voice:
+  stt_model: "base"           # tiny | base | small | medium | large-v3
+  stt_device: "auto"          # cpu | cuda | auto
+  stt_compute_type: "int8"
+  tts_engine: "kokoro"        # kokoro | piper
+  tts_voice: "af_sky"
+  vad_threshold: 0.5
+  sample_rate: 16000
+  chunk_duration_ms: 30
+
+perception:
+  enable_wifi_csi: false      # set true only if you have a compatible NIC
+  enable_microphone: true
+  enable_system_metrics: true
+  csi_interface: "wlan0"
+  presence_threshold: 0.6
+  metrics_interval_sec: 5.0
+
+reasoning:
+  max_parallel_worlds: 4
+  world_sim_steps: 8
+  planner_model: "grok-3-latest"
+  enable_counterfactuals: true
+
+interface:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins:
+    - "http://localhost:5173"
+    - "http://localhost:3000"
+  ws_heartbeat_sec: 15.0
+  api_key: ""                 # leave empty for local-only use
