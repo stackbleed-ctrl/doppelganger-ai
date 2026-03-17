@@ -59,7 +59,7 @@ class MemoryManager:
     Consolidation: short-term episodic buffer → long-term KG (every hour)
     """
 
-    def __init__(self, bus: EventBus, settings: Settings) -> None:
+    def __init__(self, bus: EventBus, settings: Settings, graphiti=None) -> None:
         self.bus = bus
         self.cfg = settings.memory
         self.data_dir = settings.data_dir / "memory"
@@ -72,6 +72,8 @@ class MemoryManager:
 
         # Optional backends
         self._qdrant = None
+        self.graphiti = graphiti
+        self._active_persona_id = "default"
         self._embedder = None
 
         self._tasks: list[asyncio.Task] = []
